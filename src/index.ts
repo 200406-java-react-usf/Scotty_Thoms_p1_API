@@ -7,7 +7,7 @@ import path from 'path';
 import { UserRouter } from './routers/user-router';
 import { Pool } from 'pg';
 import { sessionMiddleware } from './middleware/session-middleware';
-// import { corsFilter } from './middleware/cors-filter';
+import { corsFilter } from './middleware/cors-filter';
 // import { AuthRouter } from './routers/auth-router';
 
 // environment configuration
@@ -32,7 +32,7 @@ const app = express();
 app.use(morgan('combined', {stream: logStream}));
 app.use('/', express.json());
 app.use(sessionMiddleware);
-// app.use(corsFilter);
+app.use(corsFilter);
 // app.use('/auth', AuthRouter);
 app.use('/users', UserRouter);
 
