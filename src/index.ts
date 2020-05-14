@@ -5,12 +5,10 @@ import fs from 'fs';
 import path from 'path';
 
 import { UserRouter } from './routers/user-router';
-import { TransactionRouter } from './routers/transaction-router';
-import { AccountRouter } from './routers/account-router';
 import { Pool } from 'pg';
 import { sessionMiddleware } from './middleware/session-middleware';
 import { corsFilter } from './middleware/cors-filter';
-import { AuthRouter } from './routers/auth-router';
+// import { AuthRouter } from './routers/auth-router';
 
 // environment configuration
 dotenv.config();
@@ -35,7 +33,7 @@ app.use(morgan('combined', {stream: logStream}));
 app.use('/', express.json());
 app.use(sessionMiddleware);
 app.use(corsFilter);
-app.use('/auth', AuthRouter);
+// app.use('/auth', AuthRouter);
 app.use('/users', UserRouter);
 
 
