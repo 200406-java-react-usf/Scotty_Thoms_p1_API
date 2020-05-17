@@ -24,3 +24,8 @@ UserRouter.post('', async (req, resp) => {
 
     try {
         let newUser = await userService.addNewUser(req.body);
+        return resp.status(201).json(newUser);
+    } catch (e) {
+        return resp.status(e.statusCode || 500).json(e);
+    }
+});

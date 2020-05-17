@@ -96,7 +96,7 @@ export class UserRepository {
         } finally {
             client && client.release();
         }
-        }
     }
+    
 
 };
