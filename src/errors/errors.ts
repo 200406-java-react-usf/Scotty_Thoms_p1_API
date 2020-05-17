@@ -33,7 +33,17 @@ class ResourceNotFoundError extends ApplicationError {
     }
 }
 
+class ResourcePersistenceError extends ApplicationError {
+
+    constructor(reason?: string) {
+        super(409, reason);
+        super.setMessage('The resource was not persisted.');
+    }
+    
+}
+
 export {
     InternalServerError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
+    ResourcePersistenceError
 }
