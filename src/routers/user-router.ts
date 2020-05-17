@@ -5,6 +5,9 @@ export const UserRouter = express.Router();
 
 const userService = AppConfig.userService;
 
+/**
+ * Used to get all users
+ */
 UserRouter.get('', async (req, resp) => {
     try {
         let payload = await userService.getAllUsers();
@@ -13,3 +16,11 @@ UserRouter.get('', async (req, resp) => {
         resp.status(400).json(e);
     }
 });
+
+/**
+ * Used to create a new user
+ */
+UserRouter.post('', async (req, resp) => {
+
+    try {
+        let newUser = await userService.addNewUser(req.body);

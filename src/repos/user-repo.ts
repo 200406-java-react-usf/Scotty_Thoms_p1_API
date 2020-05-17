@@ -2,6 +2,7 @@ import { User } from '../models/user';
 import { PoolClient } from 'pg';
 import { connectionPool } from '..';
 import { InternalServerError } from '../errors/errors';
+import { mapUserResultSet } from '../util/result-set-mapper';
 
 export class UserRepository {
     baseQuery = `
@@ -62,4 +63,40 @@ export class UserRepository {
             client && client.release();
         }
     }
+
+     /**
+     * Checks to see if the username exists in the database. 
+     * @param username {string} username of user
+     */
+    async checkUsername(username: string): Promise<User> {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `select * from users where username = $1`;
+            let rs = await client.query(sql, [username]);
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    async checkEmail(email: string): Promise<User> {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `select * from users where email = $1`;
+            let rs = await client.query(sql, [email]);
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+        }
+    }
+
 };
