@@ -1,9 +1,9 @@
 export interface UserSchema {
-	id: number,
+	user_id: number,
 	username: string,
 	password: string,
 	first_name: string,
     last_name: string,
     email: string,
-	role_id: string
+	user_role_id: string
 }

@@ -8,6 +8,7 @@ import { UserRouter } from './routers/user-router';
 import { Pool } from 'pg';
 import { sessionMiddleware } from './middleware/session-middleware';
 import { corsFilter } from './middleware/cors-filter';
+import { AuthRouter } from './routers/auth-router';
 // import { AuthRouter } from './routers/auth-router';
 
 // environment configuration
@@ -35,6 +36,7 @@ app.use(sessionMiddleware);
 app.use(corsFilter);
 // app.use('/auth', AuthRouter);
 app.use('/users', UserRouter);
+app.use('/auth', AuthRouter);
 
 
 app.listen(8080, () => {

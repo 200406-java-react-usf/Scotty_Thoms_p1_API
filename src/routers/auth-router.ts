@@ -16,7 +16,7 @@ const userService = AppConfig.userService;
  });
 
 /**
- * Used to login and will check to see if user is "admin"
+ * Used to login user given correct username and password
  */
 
 AuthRouter.post('', async (req,resp) => {

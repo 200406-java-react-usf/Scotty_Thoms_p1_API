@@ -1,5 +1,6 @@
 import express from 'express';
 import AppConfig from '../config/app';
+import { adminGuard } from '../middleware/auth-middleware';
 
 export const UserRouter = express.Router();
 
@@ -8,7 +9,7 @@ const userService = AppConfig.userService;
 /**
  * Used to get all users
  */
-UserRouter.get('', async (req, resp) => {
+UserRouter.get('', adminGuard, async (req, resp) => {
     try {
         let payload = await userService.getAllUsers();
         resp.status(200).json(payload);

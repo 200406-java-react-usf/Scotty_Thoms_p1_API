@@ -95,7 +95,26 @@ export class UserRepository {
             client = await connectionPool.connect();
             let sql = `select * from users where email = $1`;
             let rs = await client.query(sql, [email]);
-            console.log(mapUserResultSet(rs.rows[0]));
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    /**
+     * Used to login user. Will return User if username and password exist and are correct
+     * @param un {string} username of user
+     * @param pw {string} password of user
+     */
+    async getbyCredentials(un: string, pw: string) {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where u.username = $1 and u.password = $2`
+            let rs = await client.query(sql, [un, pw]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
