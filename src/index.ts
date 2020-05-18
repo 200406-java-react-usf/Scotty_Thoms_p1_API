@@ -38,5 +38,5 @@ app.use('/users', UserRouter);
 
 
 app.listen(8080, () => {
-    console.log(`Application running...`);
+    console.log(`Application running on localhost:8080`);
 });
