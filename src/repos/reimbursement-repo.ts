@@ -42,4 +42,31 @@ export class ReimbursementRepository {
             client && client.release();
         }
     }
+
+    /**
+     * Creates a new reimbursement in the system
+     * @param newReimb {Reimbursement} the new reimbursement that will be added to the database
+     */
+    async save(newReimb: Reimbursement): Promise<Reimbursement> {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            // let reimbId = (await client.query(`select reimb_type_id from reimbursement_types where reimb_type = $1`, [newReimb.reimb_type_id])).rows[0].reimb_type_id;
+            let sql = `
+            insert into reimbursements (amount, submitted, description, author_id, reimb_status_id, reimb_type_id )
+            values ($1, CURRENT_TIMESTAMP, $2, $3, 1, $4  ) returning reimb_id
+            `;
+
+            let rs = await client.query(sql, [newReimb.amount, newReimb.description, newReimb.author_id, newReimb.reimb_type_id]);
+            newReimb.reimb_id = rs.rows[0].reimb_id;
+
+            return newReimb;
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
 }

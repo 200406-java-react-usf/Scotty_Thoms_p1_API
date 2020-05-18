@@ -23,4 +23,10 @@ export class ReimbursementService {
             throw e;
         }
     }
+
+    async addNewReimb(newReimb: Reimbursement): Promise<Reimbursement> {
+        const persistedReimb = await this.reimbRepo.save(newReimb);
+
+        return persistedReimb;
+    }
 }
