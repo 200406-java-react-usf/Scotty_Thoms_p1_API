@@ -46,18 +46,19 @@ export class UserRepository {
 
         try {
             client = await connectionPool.connect();
-            let roleId = (await client.query('select user_id from user_roles where name = $1', [newUser.role])).rows[0].id;
-
+            let roleId = (await client.query('select role_id from user_roles where role_name = $1', [newUser.role])).rows[0].role_id;
             let sql = `
                 insert into users (username, password, first_name, last_name, email, user_role_id)
-                values ($1, $2, $3, $4, $5) returning user_id
+                values ($1, $2, $3, $4, $5, $6) returning user_id
             `;
+
 
             let rs = await client.query(sql, [newUser.username, newUser.password, newUser.firstName, newUser.lastName, newUser.email, roleId])
             newUser.id = rs.rows[0].id;
 
             return newUser;
         } catch (e) {
+            console.log(e);
             throw new InternalServerError();
         } finally {
             client && client.release();
@@ -83,6 +84,10 @@ export class UserRepository {
         }
     }
 
+    /**
+     * Will check to see if the email is already in the database (another user has this email)
+     * @param email {string} email provided
+     */
     async checkEmail(email: string): Promise<User> {
         let client: PoolClient;
 
@@ -90,6 +95,7 @@ export class UserRepository {
             client = await connectionPool.connect();
             let sql = `select * from users where email = $1`;
             let rs = await client.query(sql, [email]);
+            console.log(mapUserResultSet(rs.rows[0]));
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();

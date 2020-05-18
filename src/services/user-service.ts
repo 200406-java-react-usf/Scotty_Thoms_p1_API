@@ -43,10 +43,10 @@ export class UserService {
             throw new ResourcePersistenceError('This email is already registered with another user. Please provide a different email.');
         }
 
-        newUser.role = 'User';
+        newUser.role = 'Employee';
         const persistedUser = await this.userRepo.save(newUser);
 
-        return this.removePassword(newUser);
+        return this.removePassword(persistedUser);
     }
 
     /**
@@ -55,35 +55,42 @@ export class UserService {
      */
     async checkUsername(username: string): Promise<boolean> {
         
-        try {
-            await this.userRepo.checkUsername(username);
-        } catch (e) {
+        let usernameExists = await this.userRepo.checkUsername(username);
+        if (this.isEmpty(usernameExists)) {
+            console.log(`username ${username} is available.`);
+            return true;
+        } else {
             console.log(`username ${username} is already taken.`);
             return false;
-        } 
-  
-        console.log(`username ${username} is available.`);
-        return true;
+        }
+        
     }
-
+    
     /**
      * Will check to see if the email is already in the database (another user has this email)
      * @param email {string} email provided
      */
     async checkEmail(email: string): Promise<boolean> {
 
-        try {
-            await this.userRepo.checkEmail(email);
-        } catch (e) {
+        let emailExists = await this.userRepo.checkEmail(email);
+        if (this.isEmpty(emailExists)) {
+            console.log(`email ${email} is available.`);
+            return true;
+        } else {
             console.log(`email ${email} is already registered with another user.`);
             return false;
         }
-
-        console.log(`email ${email} is available.`);
-        return true;
     }
 
-      
+    private isEmpty(obj) {
+        for(let key in obj) {
+            if(obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
+    }  
+
+
     private removePassword(user: User): User {
         if(!user || !user.password) return user;
         delete user.password;
