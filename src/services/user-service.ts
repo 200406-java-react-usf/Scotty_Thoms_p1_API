@@ -5,7 +5,7 @@ import {
     ResourcePersistenceError, 
     BadRequestError, 
     AuthError } from '../errors/errors';
-import { isEmptyObject, isValidStrings } from '../util/validator';
+import { isEmptyObject, isValidStrings, isValidObject } from '../util/validator';
 
 export class UserService {
     constructor (private userRepo: UserRepository) {
@@ -35,6 +35,10 @@ export class UserService {
      * @param newUser {User} user to add
      */
     async addNewUser(newUser: User): Promise<User> {
+
+        if (!isValidObject(newUser)) {
+            throw new BadRequestError('One or more fields are not properly filled out');
+        }
 
         let isUsernameAvailable = await this.checkUsername(newUser.username);
 
