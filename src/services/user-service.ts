@@ -5,7 +5,11 @@ import {
     ResourcePersistenceError, 
     BadRequestError, 
     AuthError } from '../errors/errors';
-import { isEmptyObject, isValidStrings, isValidObject } from '../util/validator';
+import { 
+    isEmptyObject,
+    isValidStrings, 
+    isValidObject, 
+    isValidId } from '../util/validator';
 
 export class UserService {
     constructor (private userRepo: UserRepository) {
@@ -25,6 +29,28 @@ export class UserService {
             }
 
             return users.map(this.removePassword);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    /**
+     * Will get user with given id
+     * @param id {number} user id
+     */
+    async getUserById(id: number): Promise<User> {
+        try {
+            if(!isValidId(id)) {
+                throw new BadRequestError();
+            }
+
+            let user = await this.userRepo.getById(id);
+
+            if (isEmptyObject(user)) {
+                throw new ResourceNotFoundError('No user exists with provided ID.');
+            }
+
+            return this.removePassword(user);
         } catch (e) {
             throw e;
         }

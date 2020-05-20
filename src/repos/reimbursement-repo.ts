@@ -44,6 +44,25 @@ export class ReimbursementRepository {
     }
 
     /**
+     * Gets all reimbursements from specific user
+     * @param username {string} username 
+     */
+    async getReimbursementByUsername(username: string): Promise<Reimbursement[]> {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where username = $1`;
+            let rs = await client.query(sql, [username]);
+            return rs.rows;
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    /**
      * Creates a new reimbursement in the system
      * @param newReimb {Reimbursement} the new reimbursement that will be added to the database
      */

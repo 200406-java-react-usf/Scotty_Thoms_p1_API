@@ -11,6 +11,15 @@ export function isEmptyObject<T>(obj: T) {
 }
 
 /**
+ * Checks to see if the id sent is valid: needs to be both truthy, an integer and a positive number.
+ * @param id {number} The ID to be checked if it is valid.
+ */
+export const isValidId = (id: number): boolean => {
+    if (id && typeof id === 'number' && Number.isInteger(id) && id > 0) return true;
+    return false;
+}
+
+/**
  * Checks to see if the given param(s) are ALL of type string && truthy
  * @param strs {...strs} strings being checked
  */

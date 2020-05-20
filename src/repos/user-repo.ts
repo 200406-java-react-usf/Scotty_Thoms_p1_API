@@ -38,6 +38,26 @@ export class UserRepository {
     }
 
     /**
+     * Gets a single User with id you send as param if it exists
+     * @param id {nubmer} user id
+     */
+    async getById(id: number): Promise<User> {
+        
+        let client: PoolClient;
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where u.user_id = $1`;
+            let rs = await client.query(sql, [id]);
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+
+    }
+
+    /**
      * Creates a new user in the system with info provided.
      * @param newUser {User} the new user that will be added to the database
      */

@@ -17,6 +17,16 @@ ReimbursementRouter.get('', async (req, resp) => {
     }
 });
 
+ReimbursementRouter.get('/:username', async (req, resp) => {
+    const username = req.params.username;
+    try {
+        let payload = await reimbursementService.getReimbursementByUsername(username);
+        resp.status(200).json(payload);
+    } catch (e) {
+        resp.status(404).json(e);
+    }
+});
+
 ReimbursementRouter.post('', async (req, resp) => {
     try {
         let newReimb = await reimbursementService.addNewReimb(req.body);
