@@ -37,7 +37,7 @@ ReimbursementRouter.post('', async (req, resp) => {
     }
 })
 
-ReimbursementRouter.put('', managerGuard, async (req,resp) => {
+ReimbursementRouter.put('', async (req,resp) => {
     try {
         let updatedReimb = await reimbursementService.updateReimb(req.body);
         return resp.status(202).json(updatedReimb);
