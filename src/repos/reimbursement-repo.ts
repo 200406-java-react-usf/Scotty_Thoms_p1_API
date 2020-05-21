@@ -23,7 +23,7 @@ export class ReimbursementRepository {
         join reimbursement_types rt
         on r.reimb_type_id = rt.reimb_type_id 
         join users u
-        on r.author_id = u.user_id 
+        on r.author_id = u.user_id
     `
 
     /**
@@ -34,7 +34,7 @@ export class ReimbursementRepository {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} order by reimb_id`;
+            let sql = `${this.baseQuery} order by reimb_status_id desc`;
             let rs = await client.query(sql);
             return rs.rows;
         } catch (e) {
@@ -93,7 +93,7 @@ export class ReimbursementRepository {
      * Will approve or deny a reimbursement 
      * @param updatedReimb {Reimbursement} the reimb that will either be approved or denied
      */
-    async resolve(updatedReimb: Reimbursement): Promise<Reimbursement> {
+    async resolve(updatedReimb: Reimbursement): Promise<boolean> {
         let client: PoolClient;
         try {
             client = await connectionPool.connect();
@@ -106,13 +106,35 @@ export class ReimbursementRepository {
                 where reimb_id = $1
             `;
             let rs = await client.query(sql, [updatedReimb.reimb_id, updatedReimb.resolver_id, updatedReimb.reimb_status_id]);
-            return rs.rows[0];
+            return true;
         } catch (e) {
             console.log(e);
             throw new InternalServerError();
         } finally {
             client && client.release();
         }
+    }
+
+    async update(updatedReimb: Reimbursement): Promise<boolean> {
+        let client: PoolClient;
+            try { 
+                client = await connectionPool.connect();
+                let sql = `
+                    update reimbursements
+                    set
+                        amount = $2,
+                        submitted = CURRENT_TIMESTAMP,
+                        description = $3,
+                        reimb_type_id = $4
+                    where reimb_id = $1
+                `;
+                let rs = await client.query(sql, [updatedReimb.reimb_id, updatedReimb.amount, updatedReimb.description, updatedReimb.reimb_type_id]);
+                return true;
+            } catch (e) {
+                throw new InternalServerError();
+            } finally {
+                client && client.release();
+            }
     }
 
     async getById(id: number): Promise<Reimbursement> {

@@ -55,9 +55,8 @@ export class ReimbursementService {
         // will throw eror if no reimb is found with that ID
         await this.getReimbById(newReimb.reimb_id);
         
-        // if(newReimb.resolver_id) 
-        await this.reimbRepo.resolve(newReimb);
-        // else await this.reimbRepo.update(newReimb);
+        if(newReimb.resolver_id) await this.reimbRepo.resolve(newReimb);
+        else await this.reimbRepo.update(newReimb);
 
         
         return true;
