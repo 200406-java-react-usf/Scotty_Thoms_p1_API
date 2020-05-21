@@ -33,7 +33,35 @@ class ResourceNotFoundError extends ApplicationError {
     }
 }
 
+class ResourcePersistenceError extends ApplicationError {
+
+    constructor(reason?: string) {
+        super(409, reason);
+        super.setMessage('The resource was not persisted.');
+    }
+    
+}
+
+class BadRequestError extends ApplicationError {
+
+    constructor(reason?: string) {
+        super(400, reason);
+        super.setMessage('Bad request. Invalid parameters entered.');
+        
+    }
+}
+
+class AuthError extends ApplicationError {
+    constructor(reason?: string) {
+        super(401, reason);
+        super.setMessage('Authentication failed.');
+    }
+}
+
 export {
     InternalServerError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
+    ResourcePersistenceError,
+    BadRequestError,
+    AuthError
 }
