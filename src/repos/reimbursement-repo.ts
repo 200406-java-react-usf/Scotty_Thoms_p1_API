@@ -88,4 +88,40 @@ export class ReimbursementRepository {
         }
     }
 
+    async resolve(updatedReimb: Reimbursement): Promise<Reimbursement> {
+        let client: PoolClient;
+        try {
+            client = await connectionPool.connect();
+            let sql = `
+                update reimbursements
+                set
+                    resolved = CURRENT_TIMESTAMP,
+                    resolver_id = $2,
+                    reimb_status_id = $3
+                where reimb_id = $1
+            `;
+            let rs = await client.query(sql, [updatedReimb.reimb_id, updatedReimb.resolver_id, updatedReimb.reimb_status_id]);
+            return rs.rows[0];
+        } catch (e) {
+            console.log(e);
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    async getById(id: number): Promise<Reimbursement> {
+        let client: PoolClient;
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where u.reimb_id = $1`;
+            let rs = await client.query(sql, [id]);
+            return rs.rows[0];
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
 }

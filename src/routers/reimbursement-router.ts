@@ -35,3 +35,14 @@ ReimbursementRouter.post('', async (req, resp) => {
         return resp.status(e.statusCode || 500).json(e);
     }
 })
+
+ReimbursementRouter.put('', async (req,resp) => {
+    try {
+        console.log("line 1");
+        let updatedReimb = await reimbursementService.updateReimb(req.body);
+        console.log("line 2");
+        return resp.status(202).json(updatedReimb);
+    } catch (e) {
+        return resp.status(e.statusCode || 500).json(e);
+    }
+})
