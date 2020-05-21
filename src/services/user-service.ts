@@ -124,6 +124,25 @@ export class UserService {
     }
 
     /**
+     * Will delete user in database
+     * @param userToBeDeleted {User} user to be deleted
+     */
+    async deleteUser(userToBeDeleted: User): Promise<boolean> {
+        
+        if (!isValidObject(userToBeDeleted)) {
+            throw new BadRequestError();
+        }
+
+        // will throw an error if no user is found with provided id
+        await this.getUserById(userToBeDeleted.id);
+
+        await this.userRepo.delete(userToBeDeleted);
+
+        return true;
+
+    }
+
+    /**
      * Will "login" user if given correct username and password that exists in the database.
      * @param un {string} username
      * @param pw {string} password

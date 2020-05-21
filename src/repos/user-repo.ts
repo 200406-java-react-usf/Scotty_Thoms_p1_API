@@ -115,6 +115,29 @@ export class UserRepository {
             }
     }
 
+        /**
+     * Deletes a user that you send in as a param
+     * Need admin access. Only need user ID to delete.
+     * @param userToDelete {User} user to delete
+     */
+    async delete(userToDelete: User): Promise<boolean> {
+        let client: PoolClient;
+            try { 
+                client = await connectionPool.connect();
+                let sql = `
+                    delete from users
+                    where user_id = $1
+                `;
+                await client.query(sql, [userToDelete.id]);
+                return true;
+            } catch (e) {
+                console.log(e);
+                throw new InternalServerError();
+            } finally {
+                client && client.release();
+            }
+    }
+
      /**
      * Checks to see if the username exists in the database. 
      * @param username {string} username of user
