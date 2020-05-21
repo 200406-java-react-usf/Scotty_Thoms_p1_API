@@ -1,5 +1,6 @@
 import express from 'express';
 import AppConfig from '../config/app';
+import { managerGuard } from '../middleware/auth-middleware';
 
 export const ReimbursementRouter = express.Router();
 
@@ -36,7 +37,7 @@ ReimbursementRouter.post('', async (req, resp) => {
     }
 })
 
-ReimbursementRouter.put('', async (req,resp) => {
+ReimbursementRouter.put('', managerGuard, async (req,resp) => {
     try {
         let updatedReimb = await reimbursementService.updateReimb(req.body);
         return resp.status(202).json(updatedReimb);
