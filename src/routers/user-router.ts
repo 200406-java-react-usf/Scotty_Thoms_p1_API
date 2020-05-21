@@ -30,3 +30,15 @@ UserRouter.post('', async (req, resp) => {
         return resp.status(e.statusCode || 500).json(e);
     }
 });
+
+/**
+ * used to update a user that already exists in database
+ */
+UserRouter.put('', async (req,resp) => {
+    try {
+        let updatedUser = await userService.updateUser(req.body);
+        return resp.status(202).json(updatedUser);
+    } catch (e) {
+        return resp.status(e.statusCode || 500).json(e);
+    }
+});

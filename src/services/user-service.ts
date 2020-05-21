@@ -85,6 +85,45 @@ export class UserService {
     }
 
     /**
+     * Will update user that already exists in database
+     * @param updatedUser {User} user to update
+     */
+    async updateUser(updatedUser: User): Promise<boolean> {
+
+
+        if (!isValidObject(updatedUser)) {
+            throw new BadRequestError();
+        }
+
+        // will throw an error if no user is found with provided id
+        let userToUpdate = await this.getUserById(updatedUser.id);
+
+        let isUsernameAvailable = await this.checkUsername(updatedUser.username);
+
+        if(userToUpdate.username === updatedUser.username) {
+            isUsernameAvailable = true;
+        }
+        
+        if (!isUsernameAvailable) {
+            throw new ResourcePersistenceError('This username is already taken. Please pick another.');
+        }
+
+        let isEmailAvailable = await this.checkEmail(updatedUser.email);
+
+        if(userToUpdate.email === updatedUser.email) {
+            isEmailAvailable = true;
+        }
+
+        if (!isEmailAvailable) {
+            throw new ResourcePersistenceError('This email is already taken. Please use another.')
+        }
+
+        await this.userRepo.update(updatedUser);
+
+        return true;
+    }
+
+    /**
      * Will "login" user if given correct username and password that exists in the database.
      * @param un {string} username
      * @param pw {string} password

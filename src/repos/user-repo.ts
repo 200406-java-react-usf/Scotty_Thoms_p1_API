@@ -85,6 +85,36 @@ export class UserRepository {
         }
     }
 
+    /**
+     * Updates a user that you send in as param
+     * Can only update username, password, first name, and last name (for now)
+     * @param updatedUser {User} user you want updated
+     */
+    async update(updatedUser: User): Promise<boolean> {
+        let client: PoolClient;
+            try { 
+                client = await connectionPool.connect();
+                let sql = `
+                    update users
+                    set
+                        username = $2,
+                        password = $3,
+                        first_name = $4,
+                        last_name = $5,
+                        email = $6
+                    where user_id = $1
+                `;
+                await client.query(sql, [updatedUser.id, updatedUser.username, updatedUser.password, updatedUser.firstName, updatedUser.lastName, updatedUser.email]);
+                
+                return true;
+            } catch (e) {
+                console.log(e);
+                throw new InternalServerError();
+            } finally {
+                client && client.release();
+            }
+    }
+
      /**
      * Checks to see if the username exists in the database. 
      * @param username {string} username of user
