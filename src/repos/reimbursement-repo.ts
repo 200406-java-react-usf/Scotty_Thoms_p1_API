@@ -2,6 +2,7 @@ import { Reimbursement } from "../models/reimbursement";
 import { PoolClient } from "pg";
 import { connectionPool } from "..";
 import { InternalServerError } from "../errors/errors";
+import { mapReimbResultSet } from "../util/result-set-mapper";
 
 export class ReimbursementRepository {
     baseQuery = `
@@ -88,6 +89,10 @@ export class ReimbursementRepository {
         }
     }
 
+    /**
+     * Will approve or deny a reimbursement 
+     * @param updatedReimb {Reimbursement} the reimb that will either be approved or denied
+     */
     async resolve(updatedReimb: Reimbursement): Promise<Reimbursement> {
         let client: PoolClient;
         try {
@@ -114,9 +119,9 @@ export class ReimbursementRepository {
         let client: PoolClient;
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where u.reimb_id = $1`;
+            let sql = `select * from reimbursements where reimb_id = $1`;
             let rs = await client.query(sql, [id]);
-            return rs.rows[0];
+            return mapReimbResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
         } finally {

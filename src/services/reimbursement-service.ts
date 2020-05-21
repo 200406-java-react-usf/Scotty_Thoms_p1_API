@@ -45,11 +45,15 @@ export class ReimbursementService {
      * @param newReimb {Reimbursement}
      */
     async updateReimb(newReimb: Reimbursement): Promise<boolean> {
-        if (!isValidObject(newReimb) || !isValidId(newReimb.reimb_id)) {
-            throw new BadRequestError();
+        if (!isValidObject(newReimb)) {
+            throw new BadRequestError('One or more fields are missing');
+        }
+        if (!isValidId(newReimb.reimb_id)) {
+            throw new BadRequestError('You did not enter a valid ID');
         }
 
-        // if (!this.getReimbById(newReimb.reimb_id)) throw new BadRequestError('Bad ID');
+        // will throw eror if no reimb is found with that ID
+        await this.getReimbById(newReimb.reimb_id);
         
         // if(newReimb.resolver_id) 
         await this.reimbRepo.resolve(newReimb);
@@ -69,7 +73,6 @@ export class ReimbursementService {
     async getReimbById(id: number): Promise<Reimbursement> {
         try {
             let reimb = await this.reimbRepo.getById(id);
-            console.log(reimb);
 
             if (isEmptyObject(reimb)) {
                 throw new ResourceNotFoundError('No reimb found with that ID');
