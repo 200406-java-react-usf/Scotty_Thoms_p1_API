@@ -42,5 +42,5 @@ app.use('/reimbursements', ReimbursementRouter);
 
 
 app.listen(8080, () => {
-    console.log(`Application running on localhost:8080`);
+    console.log(`Application running on http://localhost:8080`);
 });
