@@ -48,12 +48,12 @@ export class ReimbursementService {
         if (!isValidObject(newReimb)) {
             throw new BadRequestError('One or more fields are missing');
         }
-        if (!isValidId(newReimb.reimb_id)) {
-            throw new BadRequestError('You did not enter a valid ID');
-        }
+        // if (!isValidId(newReimb.reimb_id)) {
+        //     throw new BadRequestError('You did not enter a valid ID');
+        // }
 
         // will throw eror if no reimb is found with that ID
-        await this.getReimbById(newReimb.reimb_id);
+        // await this.getReimbById(newReimb.reimb_id);
         
         if(newReimb.resolver_id) await this.reimbRepo.resolve(newReimb);
         else await this.reimbRepo.update(newReimb);

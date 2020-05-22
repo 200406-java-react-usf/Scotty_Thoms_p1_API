@@ -14,7 +14,7 @@ export class ReimbursementRepository {
             r.description,
             r.receipt,
             u.username as author_id,
-            r.resolver_id,
+            u2.username as resolver_id,
             rs.reimb_status as reimb_status_id,
             rt.reimb_type as reimb_type_id
         from reimbursements r
@@ -24,6 +24,8 @@ export class ReimbursementRepository {
         on r.reimb_type_id = rt.reimb_type_id 
         join users u
         on r.author_id = u.user_id
+        left join users u2
+        on r.resolver_id = u2.user_id
     `
 
     /**
@@ -53,7 +55,7 @@ export class ReimbursementRepository {
 
         try {
             client = await connectionPool.connect();
-            let sql = `${this.baseQuery} where username = $1`;
+            let sql = `${this.baseQuery} where u.username = $1`;
             let rs = await client.query(sql, [username]);
             return rs.rows;
         } catch (e) {
